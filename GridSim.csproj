@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\Fire.gif" />
+    <None Remove="Resources\FireFighterWalk.gif" />
+    <None Remove="Resources\FireFighterWalk2.gif" />
+    <None Remove="Resources\flashpoint_industry.png" />
+    <None Remove="Resources\Hazard.gif" />
+    <None Remove="Resources\Smoke.gif" />
+    <None Remove="Resources\transparent.png" />
+    <None Remove="Resources\Victim.gif" />
+    <None Remove="Resources\Wall.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\FireFighterWalk.gif" />
+    <Resource Include="Resources\FireFighterWalk2.gif" />
+    <Resource Include="Resources\Smoke.gif" />
+    <Resource Include="Resources\SmokeDoggyDog.gif" />
+    <Resource Include="Resources\transparent.png" />
+    <Resource Include="Resources\Victim.gif" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="View\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hardcodet.NotifyIcon.Wpf" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+    <PackageReference Include="System.IO.Ports" Version="9.0.0" />
+    <PackageReference Include="WpfAnimatedGif" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Fire.gif" />
+    <Resource Include="Resources\flashpoint_industry.png" />
+    <Resource Include="Resources\Hazard.gif" />
+    <Resource Include="Resources\Wall.png" />
+  </ItemGroup>
+
+</Project>

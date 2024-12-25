@@ -1,0 +1,128 @@
+﻿<Window x:Class="GridSim.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:gif="http://wpfanimatedgif.codeplex.com"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:local="clr-namespace:GridSim"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1400">
+    <Window.Resources>
+        <ImageBrush x:Key="CanvasBackgroundBrush" 
+                ImageSource="/Resources/flashpoint_industry.png" 
+                Stretch="UniformToFill" />
+    </Window.Resources>
+    <Grid Background="Indigo">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <!--- ItemsControl används här för att binda till data, i detta fall till samlingen Map i MapViewModel -->
+        <StackPanel Orientation="Vertical">
+            
+        <ItemsControl Margin="5" Height="250" MinHeight="250" Width="450" Background="Black" ItemsSource="{Binding mapViewModel.Map}" HorizontalAlignment="Left" Grid.Column="0">
+            <!--- ItemsPanelTemplate definierar layouten för hur data visas. I detta fall används en UniformGrid där både antal rader och kolumner definieras av BaseTileCount i MapViewModel -->
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="{Binding mapViewModel.Columns}"
+                                 Rows="{Binding mapViewModel.Rows}"
+                                 Background="white"
+                                 Margin="2"
+                                 />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <!--- DataTemplate definierar hur varje objekt i MapViewModel.Map ska renderas. I detta fall visas varje objekt som en Rectangle med en färg som definieras av TileColor, lägg till object i tile och fler rektanglar dyker upp med färgen som finns i objektet i MapViewModel.Map-->
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                            <Rectangle Fill="{Binding TileColor}">
+                            </Rectangle>
+                            <TextBlock Text="{Binding StringColRow}" FontSize="7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+            </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+            <Grid>
+                <StackPanel Grid.Column="0" Orientation="Vertical" Width="400">
+                    <TextBox Name="textBox" Text="{Binding serialViewModel.PortName, UpdateSourceTrigger=PropertyChanged}"  />
+                    <Button Name="serial_connect" Content="Connect" Command="{Binding serialViewModel.ConnectCommand}"/>
+                    <ListBox ItemsSource="{Binding serialViewModel.Messages}" Height="300"/>
+
+                    <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Orientation="Vertical">
+                        <TextBox Name="textBox1" Text="{Binding serialViewModel.TextToSend, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Name="button" Content="Send" Command="{Binding serialViewModel.SendCommand}" />
+                    </StackPanel>
+                </StackPanel>
+
+            </Grid>
+        </StackPanel>
+        <!--- kontroll Panel-->
+        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="5" >
+            <Button Content="{Binding mapViewModel.TileTypeToAdd}" Command="{Binding mapViewModel.CycleTileTypeCommand}" Margin="5" Height="50" Width="100"/>
+            <Button Content="Save" Command="{Binding mapViewModel.SaveCommand}" Margin="5"/>
+            <Button Content="Load" Command="{Binding mapViewModel.LoadCommand}" Margin="5"/>
+            <Button Content="Load to Server" Command="{Binding SendScenario}" Margin="5" Height="50"/>
+            <Button Content="Diconnect Serial" Command="{Binding serialViewModel.DisconnectCommand}" Margin="5"/> 
+        </StackPanel>
+        <!-- samma grej fast på en canvas-->
+        <ItemsControl Margin="10,10,10,10" HorizontalAlignment="Right" Height="{Binding mapViewModel.CanvasHeight}" Width="{Binding mapViewModel.CanvasWidth}"  Background="Black" ItemsSource="{Binding mapViewModel.Map}" Grid.Column="2">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Margin="2"
+                            Background="{StaticResource CanvasBackgroundBrush}"
+                            Width="{Binding mapViewModel.CanvasWidth}"
+                            Height="{Binding mapViewModel.CanvasHeight}">
+                    </Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="{Binding TileWidth}" Height="{Binding TileHeight}" Focusable="True" Background="Transparent">
+                        <Button Command="{Binding ClickCommand}" Background="Transparent" BorderThickness="0">
+                            <Image Stretch="Fill" Source="{Binding TileImage}">
+                            </Image>
+                        </Button>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <!-- FÖR SAKER SOM FINNS PÅ KARTAN TEX ELD ELLER BRANDMÄN-->
+        </ItemsControl>
+        <ItemsControl Margin="10,10,10,10" HorizontalAlignment="Right" Height="{Binding mapViewModel.CanvasHeight}" Width="{Binding mapViewModel.CanvasWidth}"  Background="Transparent" ItemsSource="{Binding mapViewModel.Elements}" IsHitTestVisible="False" Panel.ZIndex="10" Grid.Column="2">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Margin="2"
+                Background="Transparent"
+                Width="{Binding mapViewModel.CanvasWidth}"
+                Height="{Binding mapViewModel.CanvasHeight}">
+                    </Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Width="{Binding ElementWidth}" Height="{Binding ElementHeight}">
+                        <Image gif:ImageBehavior.AnimatedSource="{Binding ElementImage}"  Stretch="Fill"  IsEnabled="True" Focusable="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        </Image>
+                    </Grid>
+                    
+                    
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        
+
+    </Grid>
+</Window>
