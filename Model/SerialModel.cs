@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.IO.Ports;
-using System.Windows;
+using System.Threading;
 using System.Threading.Tasks;
-
-
+using System.Windows;
 
 namespace GridSim.Model
 {
@@ -12,7 +11,7 @@ namespace GridSim.Model
         private SerialPort? serialPort;
         private CancellationTokenSource? cancellationTokenSource;
         public event Action<string>? DataReceived;
-        public bool IsConnected = false;
+        public bool IsConnected { get; private set; } = false;
 
         public bool Connect(string portName, int baudRate)
         {
@@ -62,55 +61,53 @@ namespace GridSim.Model
             {
                 while (!cancellationToken.IsCancellationRequested && serialPort != null && serialPort.IsOpen)
                 {
-                    string? data = serialPort.ReadTo("\n");
-                    if (!string.IsNullOrWhiteSpace(data))
+                    try
                     {
-                        App.Current.Dispatcher.Invoke(() =>
+                        string? data = serialPort.ReadLine(); // Changed to ReadLine for simplicity
+                        if (!string.IsNullOrWhiteSpace(data))
                         {
-                            DataReceived?.Invoke(data);
-                        });
+                            App.Current.Dispatcher.Invoke(() => DataReceived?.Invoke(data));
+                        }
+                    }
+                    catch (TimeoutException)
+                    {
+                        // Ignore timeout exceptions to allow continuation
                     }
                 }
             }
             catch (OperationCanceledException)
             {
-                // Expected when the token is canceled
+                // Expected when cancellation is requested
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error reading data: {ex.Message}");
             }
         }
-        private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-
-                App.Current.Dispatcher.Invoke(() =>
-                {
-                // Läs inkommande data och skicka vidare via event
-                try
-                {
-                string? data = serialPort?.ReadTo("\n");
-                DataReceived?.Invoke(data);
-                }
-                catch (Exception ex)
-                {
-                        //Send(e.ToString());
-                        //Debug.WriteLine("Error in SerialPort_DataReceived\n");
-                        MessageBox.Show(ex.Message);
-                }
-                });
-        }
 
         public void Disconnect()
         {
-            if (serialPort != null && serialPort.IsOpen)
+            if (serialPort != null)
             {
-                cancellationTokenSource?.Cancel();
-                cancellationTokenSource?.Dispose();
-                serialPort.Close();
-                IsConnected = false;
+                try
+                {
+                    cancellationTokenSource?.Cancel();
+                    cancellationTokenSource?.Dispose();
+                    if (serialPort.IsOpen)
+                    {
+                        serialPort.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error during disconnect: {ex.Message}");
+                }
+                finally
+                {
+                    IsConnected = false;
+                    serialPort = null;
+                }
             }
         }
-
     }
 }
