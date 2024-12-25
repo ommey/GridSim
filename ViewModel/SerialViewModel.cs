@@ -55,22 +55,19 @@ namespace GridSim.ViewModel
             , CanExecuteConnect => { return !string.IsNullOrEmpty(portName); });
 
             SendCommand = new RelayCommand(Send => OutputSerial()
-            , canExecute => { return serialModel.isConnected; });
+            , canExecute => { return serialModel.IsConnected; });
 
             DisconnectCommand = new RelayCommand(Disconnect => { serialModel.Disconnect(); informUser("Disconnected"); }
-            , canExecute => { return serialModel.isConnected; });
+            , canExecute => { return serialModel.IsConnected; });
 
-            PortName = "COM3";
+            PortName = "COM12";
         }
 
         private void OutputSerial()
         {
-            App.Current.Dispatcher.Invoke(() =>
-            {
                 serialModel.Send(TextToSend);
                 informUser($"Skickat: {TextToSend}");
                 TextToSend = string.Empty;
-            });
         }
 
         public void informUser(string stringToDisplay)
@@ -87,7 +84,6 @@ namespace GridSim.ViewModel
         }
         public void ConnectSerial()
         {
-            {
                 if (serialModel.Connect(portName, 115200))
                 {
                     informUser($"Ansluten till {PortName}");
@@ -106,7 +102,7 @@ namespace GridSim.ViewModel
                 {
                     informUser($"Kunde inte ansluta till, Försök igen {PortName}");
                 }
-            }
+            
         }
         private void OnDataReceived(string data)
         {
@@ -133,12 +129,10 @@ namespace GridSim.ViewModel
                 }
                 catch (Exception e)
                 {
-                    informUser("RECEIVED: " + data);
+                    //informUser("RECEIVED: " + data);
                 }
 
-
-
-                //informUser("GUI received: " + data);
+                informUser("GUI received: " + data);
 
 
 
@@ -155,7 +149,7 @@ namespace GridSim.ViewModel
 
         internal bool isConnected()
         {
-            return serialModel.isConnected;
+            return serialModel.IsConnected;
         }
 
         /*public MessagesToReceiveTypes StringToEnum(string command)
