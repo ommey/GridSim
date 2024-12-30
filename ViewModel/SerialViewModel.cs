@@ -123,16 +123,16 @@ namespace GridSim.ViewModel
                             break;
                         case "MoveTile":
                             MoveTile moveTile = JsonSerializer.Deserialize<MoveTile>(data);
-                            mainViewModel.moveTile(moveTile.Row, moveTile.Column, moveTile.NewRow, moveTile.NewColumn, moveTile.Type);
+                            mainViewModel.moveTile(moveTile.Row, moveTile.Column, moveTile.NewRow, moveTile.NewColumn);
                             break;
                     }
                 }
                 catch (Exception e)
                 {
-                    //informUser("RECEIVED: " + data);
+                    informUser("RECEIVED: " + data);
                 }
 
-                informUser("GUI received: " + data);
+                //informUser("GUI received: " + data);
 
 
 

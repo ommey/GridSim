@@ -64,7 +64,8 @@
             <Button Content="Save" Command="{Binding mapViewModel.SaveCommand}" Margin="5"/>
             <Button Content="Load" Command="{Binding mapViewModel.LoadCommand}" Margin="5"/>
             <Button Content="Load to Server" Command="{Binding SendScenario}" Margin="5" Height="50"/>
-            <Button Content="Diconnect Serial" Command="{Binding serialViewModel.DisconnectCommand}" Margin="5"/> 
+            <Button Content="Diconnect Serial" Command="{Binding serialViewModel.DisconnectCommand}" Margin="5"/>
+            <Button Content="Debug knapp" Command="{Binding GeneralDebugbutton}" Margin="5" Height="50"/>
         </StackPanel>
         <!-- samma grej fast på en canvas-->
         <ItemsControl Margin="10,10,10,10" HorizontalAlignment="Right" Height="{Binding mapViewModel.CanvasHeight}" Width="{Binding mapViewModel.CanvasWidth}"  Background="Black" ItemsSource="{Binding mapViewModel.Map}" Grid.Column="2">

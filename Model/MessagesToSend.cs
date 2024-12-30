@@ -49,15 +49,4 @@ namespace GridSim.Model
         public string Type { get; set; }
     };
 
-    public class TileChangeCommand : MessagesToSend 
-    {
-        public TileChangeCommand()
-        {
-            Command = "TileChange";
-        }
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public string TileType { get; set; }
-    }
-
 }
