@@ -123,7 +123,7 @@ namespace GridSim.ViewModel
                             break;
                         case "MoveTile":
                             MoveTile moveTile = JsonSerializer.Deserialize<MoveTile>(data);
-                            mainViewModel.moveTile(moveTile.Row, moveTile.Column, moveTile.NewRow, moveTile.NewColumn);
+                            mainViewModel.moveTile(moveTile.OldRow, moveTile.OldColumn, moveTile.Row, moveTile.Column);
                             break;
                     }
                 }

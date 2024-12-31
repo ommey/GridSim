@@ -92,10 +92,10 @@ namespace GridSim.ViewModel
                 var moveTileMessage = new MoveTile
                 {
                     Command = "MoveTile",
-                    Row = 0,
-                    Column = 0,
-                    NewRow = 1,
-                    NewColumn = 1,
+                    OldRow = 0,
+                    OldColumn = 0,
+                    Row = 1,
+                    Column = 1,
                 };
                 String moveTileJson = JsonSerializer.Serialize(moveTileMessage, new JsonSerializerOptions
                 {
