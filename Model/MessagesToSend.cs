@@ -31,10 +31,10 @@ namespace GridSim.Model
         {
             Command = "MoveTile";
         }
+        public int OldRow { get; set; }
+        public int OldColumn { get; set; }
         public int Row { get; set; }
         public int Column { get; set; }
-        public int NewRow { get; set; }
-        public int NewColumn { get; set; }
         public string Type { get; set; }
     };
 
@@ -48,16 +48,5 @@ namespace GridSim.Model
         public int Column { get; set; }
         public string Type { get; set; }
     };
-
-    public class TileChangeCommand : MessagesToSend 
-    {
-        public TileChangeCommand()
-        {
-            Command = "TileChange";
-        }
-        public int Row { get; set; }
-        public int Column { get; set; }
-        public string TileType { get; set; }
-    }
 
 }
