@@ -30,6 +30,7 @@ namespace GridSim.ViewModel
         public ObservableCollection<ViewModel.TileViewModel> Map { get; set; }
         public ObservableCollection<ViewModel.ElementViewModel> Elements { get; set; }
         private Dictionary<TileViewModel, ElementViewModel> ElementOnTile { get; set; }
+        private Dictionary<String, ElementViewModel> FireFighters { get; set; }
 
         public void loadMapFromFile(string path)
         {
@@ -165,12 +166,16 @@ namespace GridSim.ViewModel
             Map = new ObservableCollection<ViewModel.TileViewModel>();
             Elements = new ObservableCollection<ViewModel.ElementViewModel>();
             ElementOnTile = new Dictionary<TileViewModel, ElementViewModel>();
+            FireFighters = new Dictionary<String, ElementViewModel>();
             SetupAdjust(width, columns, height, rows);
             CreateAndPlaceTiles(CanvasHeight / this.rows, CanvasWidth / this.columns);
             CycleTileTypeCommand = new RelayCommand(param => cycleTileType(), null);
             SaveCommand = new RelayCommand(param => SaveMap("C:\\Users\\OmarM\\Documents\\omarKan\\DA298A_Root\\GridSim\\MapGenerator\\map.json"), null/*canExecute => IsCreatingScenario*/);
             LoadCommand = new RelayCommand(param => loadMapFromFile("C:\\Users\\OmarM\\Documents\\omarKan\\DA298A_Root\\GridSim\\MapGenerator\\ValidMaps\\map.json"), null/*canExecute => IsCreatingScenario*/);
 
+
+
+            addFireFighterOnTile(tiles[1, 1], "1", 50, 50);
 
             //addElementOnTile(tiles[6, 7], ElementTypes.FireFighter, 50, 50);
         }
@@ -288,38 +293,6 @@ namespace GridSim.ViewModel
             File.WriteAllText(saveLocation, json);
         }
 
-/*        public String jsonMap ()
-        {
-            var mapData = new MapSizeData
-            {
-                Rows = Rows,
-                Columns = Columns
-            };
-            string json = JsonSerializer.Serialize(mapData, new JsonSerializerOptions
-            {
-                WriteIndented = false 
-            });
-            return json;
-        }
-
-
-
-        public String jsonTile(int row, int col)
-        {
-            var tileData = new TileData
-            {
-                Row = Rows,
-                Col = Columns,
-                Type = tiles[row, col].Type.ToString()
-            };
-            string json = JsonSerializer.Serialize(tileData, new JsonSerializerOptions
-            {
-                WriteIndented = false
-            });
-            return json;
-        }
-
-        */
         private void cycleTileType()
         {
             switch (TileTypeToAdd)
@@ -437,6 +410,17 @@ namespace GridSim.ViewModel
             });
         }
 
+        public void addFireFighterOnTile(TileViewModel tileViewModel, String id, int width, int height)
+        {
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                ElementViewModel elementViewModel = new FireFighterViewModel(id, tileViewModel.X, tileViewModel.Y);
+                FireFighters.Add(id, elementViewModel);
+                ElementOnTile.Add(tileViewModel, elementViewModel); //osäker på behövligheten
+                Elements.Add(elementViewModel);
+            });
+        }
+
         public void addElementOnTile(TileViewModel tileViewModel, ElementTypes elementType, int height, int width)
         {
             App.Current.Dispatcher.Invoke(() =>
@@ -458,6 +442,35 @@ namespace GridSim.ViewModel
             }
             });
         }
+
+
+        public void moveFireFighterTo(string id, TileViewModel to)
+        {
+            if (FireFighters.ContainsKey(id))
+            {
+                ElementViewModel element = FireFighters[id];
+
+                // Get the current tile of the firefighter
+                TileViewModel currentTile = ElementOnTile.FirstOrDefault(pair => pair.Value == element).Key;
+
+                // Update the firefighter's position
+                element.changePosition(to.X, to.Y);
+
+                // Update the ElementOnTile dictionary
+                if (currentTile != null)
+                {
+                    ElementOnTile.Remove(currentTile); // Remove the firefighter from the old tile
+                }
+                ElementOnTile[to] = element;
+            }
+            else
+            {
+                Debug.WriteLine("Firefighter not found");
+            }
+        }
+
+
+
 
         public void moveElementTo(TileViewModel from, TileViewModel to)
         {

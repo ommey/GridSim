@@ -87,23 +87,8 @@ namespace GridSim.ViewModel
 
         public void mydebugfunc()
         {
-            App.Current.Dispatcher.Invoke(() =>
-            {
-                var moveTileMessage = new MoveTile
-                {
-                    Command = "MoveTile",
-                    OldRow = 0,
-                    OldColumn = 0,
-                    Row = 1,
-                    Column = 1,
-                };
-                String moveTileJson = JsonSerializer.Serialize(moveTileMessage, new JsonSerializerOptions
-                {
-                    WriteIndented = false
-                });
-                serialViewModel.OutputString(moveTileJson);
-            });
-            
+            mapViewModel.moveFireFighterTo("1", mapViewModel.getTile(15,15));
+
         }
 
         private void sendNewMap()

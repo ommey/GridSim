@@ -156,4 +156,12 @@ namespace GridSim.ViewModel
         }
 
     }
+
+    public class FireFighterViewModel : ElementViewModel
+    {
+        public FireFighterViewModel(String id, int canvasX,int canvasY) : base(ElementTypes.FireFighter, canvasX, canvasY)
+        {
+            ElementImage = "/Resources/FireFighterWalk.gif";
+        }
+    }
 }
